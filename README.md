@@ -1,68 +1,164 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# REACT-MASONRY-LAYOUT
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+This repository is a Software of Application with React,NodeJS,SASS,etc
 
-### `yarn start`
+## Installation
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Using NodeJS, React preferably.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Plugins
 
-### `yarn test`
+AOS, React Transitions Group, React Reveal,etc
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `yarn build`
+## Usage
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```html
+$ git clone https://github.com/DanielArturoAlejoAlvarez/react-masonry-layout[NAME APP]
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+$ npm install
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+$ yarn install
 
-### `yarn eject`
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Follow the following steps and you're good to go! Important:
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![alt text](https://i1.wp.com/reactscript.com/wp-content/uploads/2016/11/React-Masonry-Infinite-Scroller.png?ssl=1)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Coding
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Views
+```js
+...
+const App = () => {
+  const [cols, setCols] = useState(3);
 
-## Learn More
+  const [CSSTransitions, setCSSTransitions] = useState("");
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  useEffect(() => {
+    setCSSTransitions("ball");
+  }, [cols]);
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  return (
+    <main className={CSSTransitions}>
+      <Fade isOpen={true}>
+        <Masonry cols={cols} gutter={2} />
+      </Fade>
+    </main>
+  );
+};
+...
+```
 
-### Code Splitting
+### Components
+```js
+...
+export const Masonry = (props) => {
+  const gutter = {
+    gridGap: `${props.gutter}rem`,
+  };
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+  const [data, setData] = useState([]);
+  const [columnElements] = useState([]);
+  const [gallery, setGallery] = useState("");
 
-### Analyzing the Bundle Size
+  const [values] = useState({
+    columns: props.cols,
+  });
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+  useEffect(() => {
+    setData(images.gallery);
+    setGallery(`gallery masonry-layout columns-${values.columns}`);
+    masonryLayout(
+      document.getElementById("gallery"),
+      document.querySelectorAll(".gallery-item"),
+      values.columns,
+      columnElements
+    );
+  }, [data, values, columnElements]);
 
-### Making a Progressive Web App
+  return (
+    <div className={gallery} style={gutter} id="gallery">
+      {!data ? (
+        <div>Loading...</div>
+      ) : (
+        data.map((item, index) => (
+          <Item
+            id={item.id}
+            url_image={item.url_image}
+            caption={item.caption}
+            key={index}
+          />
+        ))
+      )}
+    </div>
+  );
+};
+...
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+### Helpers
+```js
+...
+export const masonryLayout = (container, elements, cols, columnElements) => {
+  for (let i = 1; i <= cols; i++) {
+    let column = document.createElement("div");
+    column.classList.add("masonry-column", `column-${i}`);
+    container.appendChild(column);
+    columnElements.push(column);
+  }
 
-### Advanced Configuration
+  for (let m = 0; m < Math.ceil(elements.length / cols); m++) {
+    for (let n = 0; n < cols; n++) {
+      let item = elements[m * cols + n];
+      columnElements[n].appendChild(item);
+      item.classList.add("masonry-item");
+    }
+  }
+};
+...
+```
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+### SASS
+```scss
+...
+.masonry-layout {
+  --columns: 1;
+  --gap: 2rem;
+  $columns: 8;
 
-### Deployment
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-gap: var(--gap);
 
-### `yarn build` fails to minify
+  .masonry-item {
+    margin-bottom: var(--gap);
+  }
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+  @for $i from 1 through $columns {
+    &.columns-#{$i} {
+      --columns: #{$i}
+    }
+  }
+}
+...
+```
+
+
+
+
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/DanielArturoAlejoAlvarez/react-masonry-layout. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+## License
+
+The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+
+```
+
+```
